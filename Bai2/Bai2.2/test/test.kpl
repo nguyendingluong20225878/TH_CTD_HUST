@@ -1,0 +1,13 @@
+
+PROGRAM MiniTest;
+CONST Version = "1.0"; // Hằng số chuỗi mới
+VAR Data: BYTES;      // Kiểu dữ liệu mới
+
+BEGIN
+    (* Comment cũ *)
+    Data := 2 ** 3 % 5; // Toán tử mũ và modulo
+
+    REPEAT
+        Data := Data + 1;
+    UNTIL Data > 10;
+END.
