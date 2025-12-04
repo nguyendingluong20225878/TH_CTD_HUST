@@ -1,0 +1,19 @@
+Program TestRepeatMultiAssign;
+Var x : Integer;
+    y : Integer;
+    z : Integer;
+    i : Integer;
+
+Begin
+  x := 1;
+  y := 2;
+  z := 3;
+  i := 0;
+  
+  Repeat
+    i := i + 1;
+    Call WriteLn
+  Until i = 5;
+  
+  x, y, z := 10, 20, 30
+End.
