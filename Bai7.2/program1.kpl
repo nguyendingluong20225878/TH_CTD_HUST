@@ -1,0 +1,17 @@
+Program Program1; (* Tinh tong, hieu, tich cua a va b *)
+Var a : Integer;
+    b : Integer;
+
+Begin
+    a := ReadI; (* Nhap so a tu ban phim *)
+    b := ReadI; (* Nhap so b tu ban phim *)
+
+    Call WriteI(a + b);
+    Call WriteLn;
+    
+    Call WriteI(a - b);
+    Call WriteLn;
+    
+    Call WriteI(a * b);
+    Call WriteLn;
+End.

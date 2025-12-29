@@ -1,0 +1,18 @@
+Program Program2;
+Var n : Integer;
+    sum : Integer;
+    temp : Integer;
+
+Begin
+    n := ReadI;
+    sum := 0;
+    While n > 0 Do
+    Begin
+        temp := n / 10;        (* Chia lấy nguyên *)
+        sum := sum + (n - temp * 10); (* Phần dư = n - (n/10)*10 *)
+        n := temp;
+    End;
+
+    Call WriteI(sum);
+    Call WriteLn;
+End.
