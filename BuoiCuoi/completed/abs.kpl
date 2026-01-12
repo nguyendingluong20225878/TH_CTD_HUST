@@ -1,0 +1,7 @@
+Program AbsTest;
+   Var n : Integer;
+Begin
+   n := ReadI;
+   (* Nếu n > 0 trả về n, ngược lại trả về -n *)
+   Call WriteI( if n > 0 return n else return -n );
+End.

@@ -47,6 +47,11 @@ TokenType checkKeyword(char *string) {
   for (i = 0; i < KEYWORDS_COUNT; i++)
     if (keywordEq(keywords[i].string, string)) 
       return keywords[i].tokenType;
+    if (strcmp(string, "IF") == 0) return KW_IF;//câu 3
+  
+  // THÊM DÒNG NÀY:
+  if (strcmp(string, "RETURN") == 0) return KW_RETURN;//câu 3
+   
   return TK_NONE;
 }
 

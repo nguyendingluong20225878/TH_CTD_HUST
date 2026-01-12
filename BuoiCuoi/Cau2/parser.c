@@ -1,52 +1,36 @@
-void compileAssignSt(void) {
-  // Biến đếm số lượng biến vế trái và biểu thức vế phải
-  int varCount = 0;
-  int expCount = 0;
+// parser.c
+//Sửa parser.c Thêm hàm xử lý compileRepeatSt và cập nhật compileStatement.
+// Khai báo prototype ở đầu file hoặc file parser.h
+void compileRepeatSt(void);
 
-  // --- PHẦN 1: QUÉT VẾ TRÁI (DANH SÁCH BIẾN) ---
-  while (1) {
-      // 1. Phải là một định danh (tên biến)
-      if (lookAhead->tokenType == TK_IDENT) {
-          // Ăn token biến (ở đây bạn có thể thêm logic kiểm tra biến đã khai báo chưa)
-          eat(TK_IDENT); 
-          varCount++; // Tăng số lượng biến tìm thấy
-          
-          // 2. Nếu thấy dấu phẩy, tiếp tục vòng lặp để tìm biến tiếp theo
-          if (lookAhead->tokenType == SB_COMMA) {
-              eat(SB_COMMA);
-              continue;
-          } else {
-              // Không thấy dấu phẩy nữa -> Hết danh sách biến
-              break; 
-          }
-      } else {
-          // Nếu không phải biến mà cũng không dừng -> Lỗi
-          error(ERR_INVALIDSTATEMENT, "Variable identifier expected");
-          break;
-      }
+// Cài đặt hàm
+void compileRepeatSt(void) {
+  eat(KW_REPEAT);
+  
+  // Lưu nhãn vị trí bắt đầu vòng lặp để quay lại
+  // CodeAddress startLabel = getCurrentCodeAddress(); (Dùng cho phần sinh mã)
+
+  // Phân tích thân vòng lặp (cho phép nhiều lệnh)
+  compileStatement(); 
+  while (lookAhead->tokenType == SB_SEMICOLON) {
+      eat(SB_SEMICOLON);
+      compileStatement();
   }
 
-  // --- PHẦN 2: QUÉT DẤU GÁN (:=) ---
-  eat(SB_ASSIGN);
+  eat(KW_UNTIL);
+  compileCondition(); // Phân tích điều kiện dừng
+  
+  // Sinh mã nhảy ngược lại nếu điều kiện sai (tùy logic sinh mã)
+  // genFJ(startLabel); 
+}
 
-  // --- PHẦN 3: QUÉT VẾ PHẢI (DANH SÁCH BIỂU THỨC) ---
-  while (1) {
-      // Phân tích biểu thức (logic có sẵn của chương trình dịch)
-      compileExpression();
-      expCount++; // Tăng số lượng biểu thức tìm thấy
-
-      // Nếu thấy dấu phẩy, tiếp tục tìm biểu thức tiếp theo
-      if (lookAhead->tokenType == SB_COMMA) {
-          eat(SB_COMMA);
-          continue;
-      } else {
-          break; // Hết danh sách biểu thức
-      }
-  }
-
-  // --- PHẦN 4: KIỂM TRA NGỮ NGHĨA ---
-  // Số lượng biến bên trái phải bằng số lượng giá trị bên phải
-  if (varCount != expCount) {
-      error(ERR_INVALIDSTATEMENT, "Number of variables and expressions must match");
+// Cập nhật compileStatement
+void compileStatement(void) {
+  switch (lookAhead->tokenType) {
+    // ... các case cũ ...
+    case KW_REPEAT:     // Thêm case này
+      compileRepeatSt();
+      break;
+    // ...
   }
 }

@@ -1,0 +1,14 @@
+//Viết chương trình sumdigits.kpl tính tổng các chữ số của một số nguyên $n$ (Ví dụ: $n=123 \rightarrow \text{sum}=6$).
+Program SumDigits;
+   Var n : Integer;
+   Var s : Integer;
+Begin
+   n := ReadI;
+   s := 0;
+   While n > 0 Do
+     Begin
+       s := s + n - (n / 10) * 10; (* KPL cơ bản không có Mod, ta dùng n - (n/10)*10 *)
+       n := n / 10;
+     End;
+   Call WriteI(s);
+End.

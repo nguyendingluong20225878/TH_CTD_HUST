@@ -1,0 +1,14 @@
+Program GiaiThua; (* Tên chương trình *)
+   Var n : Integer; (* Khai báo biến n để lưu số nhập vào *)
+
+   (* Hàm tính giai thừa đệ quy: F(n) = n * F(n-1) *)
+   Function F(n : Integer) : Integer;
+   Begin
+     If n = 0 Then F := 1 Else F := n * F(n - 1);
+   End;
+
+Begin
+   (* Thân chương trình chính *)
+   n := ReadI; (* Đọc số nguyên từ bàn phím *)
+   Call WriteI( F(n) ); (* Gọi hàm F và in kết quả ra màn hình *)
+End.

@@ -1,0 +1,10 @@
+Program Swap;
+   Var x : Integer;
+   Var y : Integer;
+Begin
+   x := 10;
+   y := 20;
+   x, y := y, x; (* Cú pháp mới *)
+   Call WriteI(x);
+   Call WriteI(y);
+End.

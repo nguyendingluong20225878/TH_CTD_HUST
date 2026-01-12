@@ -21,6 +21,59 @@ extern Type* intType;
 extern Type* charType;
 extern SymTab* symtab;
 
+
+//câu 2
+// File: parser.c
+
+void compileAssignSt(void) {
+  // Biến đếm số lượng biến ở vế trái và biểu thức ở vế phải
+  int varsCount = 0;
+  int expsCount = 0;
+
+  // --- PHẦN 1: PHÂN TÍCH VẾ TRÁI (DANH SÁCH BIẾN) ---
+  while (1) {
+      // Gọi hàm phân tích biến (LValue) - hàm này cũng sinh mã đẩy địa chỉ biến lên Stack
+      compileLValue();
+      varsCount++;
+
+      // Nếu thấy dấu phẩy thì tiếp tục vòng lặp để tìm biến tiếp theo
+      if (lookAhead->tokenType == SB_COMMA) {
+          eat(SB_COMMA);
+      } else {
+          break; // Ngắt vòng lặp nếu không thấy dấu phẩy
+      }
+  }
+
+  // --- PHẦN 2: DẤU GÁN (:=) ---
+  eat(SB_ASSIGN);
+
+  // --- PHẦN 3: PHÂN TÍCH VẾ PHẢI (DANH SÁCH BIỂU THỨC) ---
+  while (1) {
+      compileExpression();
+      expsCount++;
+
+      if (lookAhead->tokenType == SB_COMMA) {
+          eat(SB_COMMA);
+      } else {
+          break;
+      }
+  }
+
+  // --- PHẦN 4: KIỂM TRA LỖI NGỮ NGHĨA ---
+  // Số lượng biến phải bằng số lượng giá trị
+  if (varsCount != expsCount) {
+      error(ERR_INVALID_STATEMENT, lookAhead->lineNo, lookAhead->colNo);
+  }
+
+  // --- PHẦN 5: SINH MÃ (CODE GENERATION) ---
+  // Với mỗi cặp (Biến, Giá trị), ta sinh lệnh ST (Store - Lưu giá trị vào địa chỉ)
+  // Lưu ý: Đây là cách xử lý đơn giản theo tuần tự.
+  int i;
+  for (i = 0; i < varsCount; i++) {
+      genST();
+  }
+}
+
 void scan(void) {
   Token* tmp = currentToken;
   currentToken = lookAhead;
@@ -437,18 +490,18 @@ Type* compileLValue(void) {
   return varType;
 }
 
-void compileAssignSt(void) {
-  Type* varType;
-  Type* expType;
+// void compileAssignSt(void) {
+//   Type* varType;
+//   Type* expType;
 
-  varType = compileLValue();
+//   varType = compileLValue();
   
-  eat(SB_ASSIGN);
-  expType = compileExpression();
-  checkTypeEquality(varType, expType);
+//   eat(SB_ASSIGN);
+//   expType = compileExpression();
+//   checkTypeEquality(varType, expType);
 
-  genST();
-}
+//   genST();
+// }
 
 void compileCallSt(void) {
   Object* proc;
@@ -685,6 +738,41 @@ void compileCondition(void) {
 
 Type* compileExpression(void) {
   Type* type;
+  /////câu 3//////
+  // KIỂM TRA XEM CÓ BẮT ĐẦU BẰNG "IF" KHÔNG
+  if (lookAhead->tokenType == KW_IF) {
+      eat(KW_IF);
+      
+      // 1. Phân tích điều kiện
+      compileCondition();
+      
+      // 2. Sinh mã Jump False (Nếu điều kiện sai thì nhảy sang ELSE)
+      Instruction* fjInstruction = genFJ(DC_VALUE);
+      
+      // 3. Xử lý vế RETURN đầu tiên
+      eat(KW_RETURN);
+      type = compileExpression(); // Đệ quy để phân tích giá trị trả về
+      
+      // 4. Sinh mã Jump (Sau khi thực hiện xong vế đúng thì nhảy qua vế sai)
+      Instruction* jInstruction = genJ(DC_VALUE);
+      
+      // Cập nhật nhãn cho lệnh Jump False ở trên (nhảy đến đây nếu sai)
+      updateFJ(fjInstruction, getCurrentCodeAddress());
+      
+      // 5. Xử lý vế ELSE
+      eat(KW_ELSE);
+      eat(KW_RETURN);
+      Type* type2 = compileExpression();
+      
+      // Kiểm tra kiểu dữ liệu 2 vế phải giống nhau
+      checkTypeEquality(type, type2);
+      
+      // Cập nhật nhãn cho lệnh Jump ở bước 4 (nhảy đến đây sau khi xong vế đúng)
+      updateJ(jInstruction, getCurrentCodeAddress());
+      
+      return type;
+  }
+  ///////////////////////////////
   
   switch (lookAhead->tokenType) {
   case SB_PLUS:

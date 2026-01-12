@@ -1,0 +1,15 @@
+// Viết chương trình fibonacci.kpl tính số Fibonacci thứ $n$ (với $F_0=0, F_1=1, F_n = F_{n-1} + F_{n-2}$).
+Program Fibonacci;
+   Var n : Integer;
+
+   Function F(n : Integer) : Integer;
+   Begin
+     If n = 0 Then F := 0 
+     Else If n = 1 Then F := 1
+     Else F := F(n-1) + F(n-2);
+   End;
+
+Begin
+   n := ReadI;
+   Call WriteI( F(n) );
+End.

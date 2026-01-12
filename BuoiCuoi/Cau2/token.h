@@ -1,0 +1,6 @@
+// token.h
+typedef enum {
+  // ...
+  KW_REPEAT, KW_UNTIL, // Thêm 2 từ khóa này
+  // ...
+} TokenType;
